@@ -12,8 +12,8 @@ class CanvasArea(QGraphicsScene):
     def __init__(self, *args, **kwargs):
         super(CanvasArea, self).__init__(*args, **kwargs)
         # Hardcoded because reasons
-        self.canvas_width = 560
-        self.canvas_height = 560
+        self.canvas_width = 800
+        self.canvas_height = 800
         self.erasing = False
         self.transform = QTransform()
         self.grid_color = QColor(209, 209, 209)
@@ -51,7 +51,7 @@ class CanvasArea(QGraphicsScene):
 
     def drawCoords(self, coords):
         if (not self.erasing):
-            self.addEllipse(coords.x(), coords.y(), 10, 10, self.defaultPen,
+            self.addEllipse(coords.x(), coords.y(), 30, 30, self.defaultPen,
                             self.defaultBrush)
         else:
             item = self.itemAt(coords, self.transform)

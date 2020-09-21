@@ -9,7 +9,7 @@ import os
 def main():
     parser = argparse.ArgumentParser(description="Sketch identifier")
     parser.add_argument("-train", action="store_true", help="Train the CNN")
-    parser.add_argument("-dir", type=str,
+    parser.add_argument("-dir", type=str, default="data",
                         help="File directory for training samples")
     args = parser.parse_args()
     if not args.train:
@@ -21,7 +21,7 @@ def main():
         app.exec_()
     else:
         trainer = Trainer()
-        trainer.train()
+        trainer.train(args.dir)
 
 
 if __name__ == "__main__":
