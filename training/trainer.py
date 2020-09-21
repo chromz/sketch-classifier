@@ -9,7 +9,6 @@ import sklearn.model_selection as sk
 import numpy as np
 import tensorflow as tf
 import joblib
-import matplotlib.pyplot as plt
 
 class Trainer(object):
     """CNN Train class"""
@@ -83,9 +82,6 @@ class Trainer(object):
 
     def train(self, dir_path='data/'):
         data, labels = self._get_dataset(dir_path)
-#          plt.imshow(data[8000].reshape(28, 28))
-        #  plt.show()
-#          print("LABEL", labels[8000])
         label_encoder = preprocessing.LabelEncoder()
         labels = label_encoder.fit_transform(labels)
         train_images, test_images, train_labels, test_labels = \

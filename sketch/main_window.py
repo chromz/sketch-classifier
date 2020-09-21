@@ -11,7 +11,6 @@ from os.path import isfile, exists
 import numpy as np
 import tensorflow as tf
 import joblib
-import matplotlib.pyplot as plt
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
