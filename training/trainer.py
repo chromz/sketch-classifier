@@ -41,6 +41,7 @@ class Trainer(object):
         for i, f in enumerate(filelist):
             if f.endswith(".npy"):
                 sketches = np.load(f"{dir_path}/{f}")
+                np.random.shuffle(sketches)
                 label = os.path.splitext(f)[0]
                 sketches = sketches[:self.CLASS_SIZE] / 255
                 sketches_labels = np.full((sketches.shape[0],),
@@ -65,11 +66,11 @@ class Trainer(object):
             keras.layers.Conv2D(64, (2, 2), strides=(1, 1), activation='relu'),
             keras.layers.Conv2D(128, (2, 2), activation='relu'),
             keras.layers.MaxPooling2D((2, 2)),
-            #  keras.layers.Conv2D(4096, (2, 2), activation='relu'),
             keras.layers.Flatten(),
-            keras.layers.Dense(1024, activation='relu'),
-            keras.layers.Dropout(.17),
-            keras.layers.Dense(1024, activation='relu'),
+            keras.layers.Dense(256, activation='relu'),
+            keras.layers.Dropout(.50),
+            keras.layers.Dense(512, activation='relu'),
+            keras.layers.Dropout(.50),
             keras.layers.Dense(num_classes, activation='softmax'),
         ])
         model.summary()
@@ -79,18 +80,44 @@ class Trainer(object):
         _, test_acc = model.evaluate(test_images, test_labels)
         return model, test_acc
 
+    def _get_full_model(self, train_images, train_labels, classes):
+        num_classes = len(classes)
+        model = keras.Sequential([
+            keras.layers.Conv2D(64, (2, 2), strides=(1, 1), activation='relu',
+                                input_shape=(28, 28, 1)),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Conv2D(64, (2, 2), strides=(1, 1), activation='relu'),
+            keras.layers.Conv2D(128, (2, 2), activation='relu'),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Flatten(),
+            keras.layers.Dense(256, activation='relu'),
+            keras.layers.Dropout(.50),
+            keras.layers.Dense(512, activation='relu'),
+            keras.layers.Dropout(.50),
+            keras.layers.Dense(num_classes, activation='softmax'),
+        ])
+        model.summary()
+        model.compile(optimizer='adam', loss='sparse_categorical_crossentropy',
+                      metrics=['accuracy'])
+        model.fit(train_images, train_labels, epochs=10)
+        return model
+
+
 
     def train(self, dir_path='data/'):
         data, labels = self._get_dataset(dir_path)
         label_encoder = preprocessing.LabelEncoder()
         labels = label_encoder.fit_transform(labels)
-        train_images, test_images, train_labels, test_labels = \
-                sk.train_test_split(data, labels, test_size=0.2,
-                                    random_state=42)
+#          train_images, test_images, train_labels, test_labels = \
+                #  sk.train_test_split(data, labels, test_size=0.2,
+                                    #  random_state=42)
 
-        model, acc = self._get_model(train_images, test_images,
-                                     train_labels, test_labels,
-                                     label_encoder.classes_)
+#          model, acc = self._get_model(train_images, test_images,
+                                     #  train_labels, test_labels,
+                                     #  label_encoder.classes_)
+        # Full training
+        model = self._get_full_model(data, labels, label_encoder.classes_)
+
         model.save("sketcher.ckpt")
         joblib.dump(label_encoder.classes_, self.CLASSES_FILE)
 
