@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ```
 
 # Running sketcher
-This repo has a pre trained CNN when you clone it so you can just run the following command to test the sketcher
+This repo has a pre trained CNN (85% Accuracy) when you clone it so you can just run the following command to test the sketcher
 
 ```bash
 python sketcher.py
